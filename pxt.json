@@ -1,7 +1,7 @@
 {
-    "name": "TM1637",
+    "name": "TM1638",
     "version": "1.0.0",
-    "description": "makecode LED Digit Display (TM1637) package for micro:bit",
+    "description": "makecode LED & Keys (TM1638) package for micro:bit",
     "license": "MIT",
     "dependencies": {
         "core": "*"
