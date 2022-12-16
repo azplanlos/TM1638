@@ -30,7 +30,7 @@ namespace TM1638 {
         init(): void {
             pins.digitalWritePin(this.clk, 0);
             pins.digitalWritePin(this.dio, 0);
-            pins.digitalWritePin(this.strobe, 0);
+            pins.digitalWritePin(this.strobe, 1);
             this._ON = 8;
             this.buf = pins.createBuffer(this.count);
             this._write_data_cmd(0x40);
