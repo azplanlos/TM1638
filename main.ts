@@ -19,6 +19,7 @@ namespace TM1638 {
         buf: Buffer;
         clk: DigitalPin;
         dio: DigitalPin;
+        strobe: DigitalPin;
         _ON: number;
         brightness: number;
         count: number;  // number of LEDs
@@ -29,6 +30,7 @@ namespace TM1638 {
         init(): void {
             pins.digitalWritePin(this.clk, 0);
             pins.digitalWritePin(this.dio, 0);
+            pins.digitalWritePin(this.strobe, 0);
             this._ON = 8;
             this.buf = pins.createBuffer(this.count);
             this.clear();
@@ -40,6 +42,7 @@ namespace TM1638 {
         _start() {
             pins.digitalWritePin(this.dio, 0);
             pins.digitalWritePin(this.clk, 0);
+            pins.digitalWritePin(this.strobe, 0);
         }
 
         /**
@@ -49,6 +52,7 @@ namespace TM1638 {
             pins.digitalWritePin(this.dio, 0);
             pins.digitalWritePin(this.clk, 1);
             pins.digitalWritePin(this.dio, 1);
+            pins.digitalWritePin(this.strobe, 1);
         }
 
         /**
@@ -220,16 +224,18 @@ namespace TM1638 {
      * create a TM1638 object.
      * @param clk the CLK pin for TM1638, eg: DigitalPin.P1
      * @param dio the DIO pin for TM1638, eg: DigitalPin.P2
+     * @param strobe the Strobe pin for TM1638, eg. DigitalPin.P0
      * @param intensity the brightness of the LED, eg: 7
-     * @param count the count of the LED, eg: 4
+     * @param count the count of the LED, eg: 8
      */
     //% weight=200 blockGap=8
     //% blockId="TM1638_create" block="CLK %clk|DIO %dio|intensity %intensity|LED count %count"
-    export function create(clk: DigitalPin, dio: DigitalPin, intensity: number, count: number): TM1638LEDs {
+    export function create(clk: DigitalPin, dio: DigitalPin, strobe: DigitalPin, intensity: number, count: number): TM1638LEDs {
         let tm = new TM1638LEDs();
         tm.clk = clk;
         tm.dio = dio;
-        if ((count < 1) || (count > 5)) count = 4;
+        tm.strobe = strobe;
+        if ((count < 1) || (count > 9)) count = 8;
         tm.count = count;
         tm.brightness = intensity;
         tm.init();
