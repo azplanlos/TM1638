@@ -33,6 +33,7 @@ namespace TM1638 {
             pins.digitalWritePin(this.strobe, 0);
             this._ON = 8;
             this.buf = pins.createBuffer(this.count);
+            this._write_data_cmd(0xC0);
             this.clear();
         }
 
@@ -58,9 +59,9 @@ namespace TM1638 {
         /**
          * send command1
          */
-        _write_data_cmd() {
+        _write_data_cmd(cmd: number) {
             this._start();
-            this._write_byte(TM1638_CMD1);
+            this._write_byte(cmd);
             this._stop();
         }
 
@@ -109,12 +110,9 @@ namespace TM1638 {
          * set data to TM1638, with given bit
          */
         _dat(bit: number, dat: number) {
-            this._write_data_cmd();
             this._start();
-            this._write_byte(TM1638_CMD2 | (bit % this.count))
-            this._write_byte(dat);
+            this._write_byte(dat)
             this._stop();
-            this._write_dsp_ctrl();
         }
 
         /**
@@ -229,7 +227,7 @@ namespace TM1638 {
      * @param count the count of the LED, eg: 8
      */
     //% weight=200 blockGap=8
-    //% blockId="TM1638_create" block="init CLK %clk|DIO %dio|Strobe %strobe|intensity %intensity|LED count %count"
+    //% blockId="TM1638_create" block="CLK %clk|DIO %dio|Strobe %strobe|intensity %intensity|LED count %count"
     export function create(clk: DigitalPin, dio: DigitalPin, strobe: DigitalPin, intensity: number, count: number): TM1638LEDs {
         let tm = new TM1638LEDs();
         tm.clk = clk;
