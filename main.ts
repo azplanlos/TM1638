@@ -33,6 +33,7 @@ namespace TM1638 {
             pins.digitalWritePin(this.strobe, 0);
             this._ON = 8;
             this.buf = pins.createBuffer(this.count);
+            this._write_data_cmd(0x40);
             this._write_data_cmd(0xC0);
             this.clear();
         }
@@ -102,8 +103,7 @@ namespace TM1638 {
             if (val > 8) val = 8;
             this._ON = 8;
             this.brightness = val - 1;
-            this._write_data_cmd();
-            this._write_dsp_ctrl();
+            this._write_data_cmd(128 + this.brightness);
         }
 
         /**
@@ -201,8 +201,7 @@ namespace TM1638 {
         //% parts="TM1638"
         on() {
             this._ON = 8;
-            this._write_data_cmd();
-            this._write_dsp_ctrl();
+            this._write_data_cmd(134);
         }
 
         /**
@@ -213,8 +212,7 @@ namespace TM1638 {
         //% parts="TM1638"
         off() {
             this._ON = 0;
-            this._write_data_cmd();
-            this._write_dsp_ctrl();
+            this._write_data_cmd(128);
         }
     }
 
