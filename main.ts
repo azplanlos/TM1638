@@ -116,34 +116,34 @@ namespace TM1638 {
          * initial TM1638
          */
         setup(): void {
-            pins.digitalWritePin(this.dio, 0)
-            pins.digitalWritePin(this.clk, 1)
-            pins.digitalWritePin(this.strobe, 1)
+            pins.digitalWritePin(this.dio, 0);
+            pins.digitalWritePin(this.clk, 1);
+            pins.digitalWritePin(this.strobe, 1);
             this.sendCommand(143);
-            this.setBrightness(7);
+            this.setBrightness(this.brightness);
             this.clear();
         }
 
-        startCommand() {
+        startCommand(): void {
             pins.digitalWritePin(this.strobe, 0);
         }
 
-        sendCommand(num: number) {
+        sendCommand(num: number): void {
             this.startCommand();
             this.writeByte(num);
             this.endCommand();
         }
 
-        writeByte(num: number) {
+        writeByte(num: number): void {
             for (let j = 0; j <= 7; j++) {
-                pins.digitalWritePin(this.dio, (num >> j) & 1)
-                pins.digitalWritePin(this.clk, 1)
-                pins.digitalWritePin(this.clk, 0)
+                pins.digitalWritePin(this.dio, (num >> j) & 1);
+                pins.digitalWritePin(this.clk, 1);
+                pins.digitalWritePin(this.clk, 0);
             }
         }
 
-        endCommand() {
-            pins.digitalWritePin(this.strobe, 1)
+        endCommand(): void {
+            pins.digitalWritePin(this.strobe, 1);
         }
 
         /**
@@ -153,9 +153,10 @@ namespace TM1638 {
         //% blockId="TM1638_set_intensity" block="%tm|set intensity %brightness"
         //% weight=50 blockGap=8
         //% parts="TM1638"
-        setBrightness(brightness: number = 7) {
-            let value = 136 + (0x07 & brightness)
-            this.sendCommand(value)
+        setBrightness(brightness: number = 7): void {
+            let value = 136 + (0x07 & brightness);
+            this.sendCommand(value);
+            this.brightness = value;
         }
 
         /**
@@ -165,12 +166,12 @@ namespace TM1638 {
         //% blockId="TM1638_shownum" block="%tm|show number %num"
         //% weight=91 blockGap=8
         //% parts="TM1638"
-        showNumber (num: number) {
-            let strg = "" + num
-            let vals = strg.split('')
-            let offset = 8 - vals.length
+        showNumber (num: number): void {
+            let strg = "" + num;
+            let vals = strg.split('');
+            let offset = 8 - vals.length;
             for (let i = offset; i <= 7; i++) {
-                this.show7Segment(i, fontMap[16 + parseInt(vals[i-offset])])
+                this.show7Segment(i, fontMap[16 + parseInt(vals[i-offset])]);
             }
         }
 
@@ -181,11 +182,10 @@ namespace TM1638 {
         //% blockId="TM1638_showText" block="%tm|display text %text"
         //% weight=70 blockGap=8
         //% parts="TM1638"
-        showText (text: string) {
+        showText (text: string): void {
             let vals = text.toUpperCase().split('')
             for (let i = 0; i < Math.min(vals.length, 8); i++) {
-                console.log(vals[i].charCodeAt(0));
-                this.show7Segment(i, fontMap[vals[i].charCodeAt(0) - 32])
+                this.show7Segment(i, fontMap[vals[i].charCodeAt(0) - 32]);
             }
         }
 
@@ -197,12 +197,29 @@ namespace TM1638 {
         //% blockId="TM1638_show7seg" block="%tm|show 7 segment at %position|show %value"
         //% weight=70 blockGap=8
         //% parts="TM1638"
-        show7Segment(position: number, value: number) {
-            this.sendCommand(0x44)
-            this.startCommand()
-            this.writeByte(0xC0 + (position << 1))
-            this.writeByte(value)
-            this.endCommand()
+        show7Segment(position: number, value: number): void {
+            this.sendCommand(0x44);
+            this.startCommand();
+            this.writeByte(0xC0 + (position << 1));
+            this.writeByte(value);
+            this.endCommand();
+        }
+
+        /**
+         * turn LED on or off
+         * @param ledNum LED number
+         * @param on on/off
+         */
+        //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on"
+        //% weight=70 blockGap=8
+        //% parts="TM1638"
+        //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
+        setLed (ledNum: number, on: boolean): void {
+            this.sendCommand(68);
+            this.startCommand();
+            this.writeByte(193 + ((ledNum-1) << 1));
+            this.writeByte(on ? 1 : 0);
+            this.endCommand();
         }
 
         /**
@@ -211,7 +228,7 @@ namespace TM1638 {
         //% blockId="TM1638_clear" block="clear %tm"
         //% weight=80 blockGap=8
         //% parts="TM1638"
-        clear() {
+        clear(): void {
             this.sendCommand(64);
             this.startCommand();
             this.writeByte(192);
@@ -220,7 +237,51 @@ namespace TM1638 {
             }
             this.endCommand();
         }
+
+        readByte(): number {
+            let num = 0;
+            for (let k = 0; k <= 7; k++) {
+                pins.digitalWritePin(this.clk, 1);
+                num |= pins.digitalReadPin(this.dio) << k;
+                pins.digitalWritePin(this.clk, 0);
+            }
+            return num;
+        }
+
+        /**
+         * reads button states as binary number, Button 1 equals 1, Button 2 equals 2, Button 8 equals 128, etc.
+         * Multiple pressed buttons can be detected.
+         */
+        //% blockId="TM1638_readButtons" block="%tm read button states"
+        //% weight=80 blockGap=8
+        //% parts="TM1638"
+        readButtons(): number {
+            this.startCommand();
+            this.writeByte(0x42);
+            basic.pause(1);
+            let buttons = 0;
+            let v = 0;
+            for (let i = 0; i < 4; i++) {
+                v = this.readByte() << i;
+                buttons |= v;
+            }
+            this.endCommand();
+            return buttons
+        }
+
+        /**
+         * check if button is pressed
+         * @param buttonNum button number to check. Starts with 1
+         */
+        //% blockId="TM1638_buttonState" block="%tm button %buttonNum|pressed"
+        //% weight=80 blockGap=8
+        //% parts="TM1638"
+        //% buttonNum.min=1 buttonNum.max=8 buttonNum.defl=1
+        buttonPressed(buttonNum: number): boolean {
+            return (this.readButtons() >> (buttonNum-1) & 1) == 1
+        }
     }
+
     /**
      * create a TM1638 object.
      * @param clk the CLK pin for TM1638, eg: DigitalPin.P1
