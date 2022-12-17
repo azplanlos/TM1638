@@ -151,6 +151,7 @@ namespace TM1638 {
          * @param brightness the brightness of the TM1638, eg: 7
          */
         //% blockId="TM1638_set_intensity" block="%tm|set intensity %brightness"
+        //% block.loc.de="%tm|setze Helligkeit %brightness"
         //% weight=50 blockGap=8
         //% parts="TM1638"
         setBrightness(brightness: number = 7): void {
@@ -164,6 +165,7 @@ namespace TM1638 {
          * @param num is a number, eg: 0
          */
         //% blockId="TM1638_shownum" block="%tm|show number %num"
+        //% block.loc.de="%tm|zeige Zahl %num"
         //% weight=91 blockGap=8
         //% parts="TM1638"
         showNumber (num: number): void {
@@ -180,6 +182,7 @@ namespace TM1638 {
          * @param text text output to display
          */
         //% blockId="TM1638_showText" block="%tm|display text %text"
+        //% block.loc.de="%tm|gebe Text aus %text"
         //% weight=70 blockGap=8
         //% parts="TM1638"
         showText (text: string): void {
@@ -195,6 +198,7 @@ namespace TM1638 {
          * @param value byte value to show
          */
         //% blockId="TM1638_show7seg" block="%tm|show 7 segment at %position|show %value"
+        //% block.loc.de="%tm|Ausgabe auf 7-Segment %position|Wert %value"
         //% weight=70 blockGap=8
         //% parts="TM1638"
         show7Segment(position: number, value: number): void {
@@ -211,6 +215,7 @@ namespace TM1638 {
          * @param on on/off
          */
         //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on"
+        //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on"
         //% weight=70 blockGap=8
         //% parts="TM1638"
         //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
@@ -226,6 +231,7 @@ namespace TM1638 {
          * clear LED.
          */
         //% blockId="TM1638_clear" block="clear %tm"
+        //% block.loc.de="lösche Ausgabe %tm"
         //% weight=80 blockGap=8
         //% parts="TM1638"
         clear(): void {
@@ -253,6 +259,7 @@ namespace TM1638 {
          * Multiple pressed buttons can be detected.
          */
         //% blockId="TM1638_readButtons" block="%tm read button states"
+        //% block.loc.de="%tm Taster status"
         //% weight=80 blockGap=8
         //% parts="TM1638"
         readButtons(): number {
@@ -274,6 +281,7 @@ namespace TM1638 {
          * @param buttonNum button number to check. Starts with 1
          */
         //% blockId="TM1638_buttonState" block="%tm button %buttonNum|pressed"
+        //% block.loc.de="%tm Taster %buttonNum|gedrückt"
         //% weight=80 blockGap=8
         //% parts="TM1638"
         //% buttonNum.min=1 buttonNum.max=8 buttonNum.defl=1
@@ -291,7 +299,8 @@ namespace TM1638 {
      * @param count the count of the LED, eg: 8
      */
     //% weight=200 blockGap=8
-    //% blockId="TM1638_create" block="CLK %clk|DIO %dio|Strobe %strobe|intensity %intensity|LED count %count"
+    //% blockId="TM1638_create" block="CLK %clk|DIO %dio|strobe %strobe|intensity %intensity|LED count %count"
+    //% block.loc.de="CLK %clk|DIO %dio|StrobePin %strobe|Intensität %intensity|LED Anzahl %count"
     export function create(clk: DigitalPin, dio: DigitalPin, strobe: DigitalPin, intensity: number, count: number): TM1638LEDs {
         let tm = new TM1638LEDs();
         tm.clk = clk;
