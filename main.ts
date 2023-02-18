@@ -8,7 +8,7 @@
 //% weight=100 color=#50A820 icon="8"
 namespace TM1638 {
 
-    enum Color {
+    export enum Color {
         RED = 0,
         GREEN = 1
     }
@@ -220,13 +220,14 @@ namespace TM1638 {
          * @param on on/off
          * @param color color to set (red or green)
          */
-        //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on| color %color"
-        //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on| Farbe %color"
+        //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on|color %col"
+        //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on|Farbe %col"
         //% weight=70 blockGap=8
         //% parts="TM1638"
         //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
-        setLed (ledNum: number, on: boolean, color: Color): void {
-            if (color == Color.GREEN) {
+        //% col.def=Color.RED
+        setLed (ledNum: number, on: boolean, col: Color = Color.RED): void {
+            if (col == Color.GREEN) {
                 ledNum += 8;
             }
             this.sendCommand(68);
