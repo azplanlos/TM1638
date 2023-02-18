@@ -8,6 +8,11 @@
 //% weight=100 color=#50A820 icon="8"
 namespace TM1638 {
 
+    enum Color {
+        RED = 0,
+        GREEN = 1
+    }
+
     const fontMap = [
         0x00, /* (space) */
         0x86, /* ! */
@@ -213,13 +218,17 @@ namespace TM1638 {
          * turn LED on or off
          * @param ledNum LED number
          * @param on on/off
+         * @param color color to set (red or green)
          */
-        //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on"
-        //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on"
+        //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on| color %color"
+        //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on| Farbe %color"
         //% weight=70 blockGap=8
         //% parts="TM1638"
         //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
-        setLed (ledNum: number, on: boolean): void {
+        setLed (ledNum: number, on: boolean, color: Color): void {
+            if (color == Color.GREEN) {
+                ledNum += 8;
+            }
             this.sendCommand(68);
             this.startCommand();
             this.writeByte(193 + ((ledNum-1) << 1));
@@ -267,13 +276,18 @@ namespace TM1638 {
             this.writeByte(0x42);
             basic.pause(1);
             let buttons = 0;
+            let buttons2 = 0;
             let v = 0;
+            let v2 = 0;
             for (let i = 0; i < 4; i++) {
-                v = this.readByte() << i;
+                let byte = this.readByte();
+                v = (byte & 0b00100010) << i;
+                v2 = (byte & 0b01000100) << i;
                 buttons |= v;
+                buttons2 |= v;
             }
             this.endCommand();
-            return buttons
+            return buttons + (buttons2 * 255);
         }
 
         /**
@@ -284,7 +298,7 @@ namespace TM1638 {
         //% block.loc.de="%tm Taster %buttonNum|gedrückt"
         //% weight=80 blockGap=8
         //% parts="TM1638"
-        //% buttonNum.min=1 buttonNum.max=8 buttonNum.defl=1
+        //% buttonNum.min=1 buttonNum.max=24 buttonNum.defl=1
         buttonPressed(buttonNum: number): boolean {
             return (this.readButtons() >> (buttonNum-1) & 1) == 1
         }
