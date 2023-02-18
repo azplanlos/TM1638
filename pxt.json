@@ -1,6 +1,6 @@
 {
     "name": "TM1638",
-    "version": "1.0.0",
+    "version": "1.5.0",
     "description": "makecode LED & Keys (TM1638) package for micro:bit",
     "license": "MIT",
     "dependencies": {
