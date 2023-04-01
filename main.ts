@@ -279,17 +279,21 @@ namespace TM1638 {
             basic.pause(1);
             let buttons = 0;
             let buttons2 = 0;
+            let buttons3 = 0;
             let v = 0;
             let v2 = 0;
+            let v3 = 0;
             for (let i = 0; i < 4; i++) {
                 let byte = this.readByte();
-                v = (byte & 0b00100010) << i;
+                v = (byte &  0b00100010) << i;
                 v2 = (byte & 0b01000100) << i;
+                v3 = (byte & 0b10001000) << i;
                 buttons |= v;
-                buttons2 |= v;
+                buttons2 |= v2;
+                buttons3 |= v3;
             }
             this.endCommand();
-            return buttons + (buttons2 * 255);
+            return buttons + (buttons2 * 255) + (buttons3 * 255 * 255);
         }
 
         /**
