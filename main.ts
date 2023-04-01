@@ -218,7 +218,7 @@ namespace TM1638 {
          * turn LED on or off
          * @param ledNum LED number
          * @param on on/off
-         * @param color color to set (red or green)
+         * @param col color of led
          */
         //% blockId="TM1638_setLed" block="%tm|turn LED %ledNum|on/off %on|color %col"
         //% block.loc.de="%tm|schalte LED %ledNum|ein/aus %on|Farbe %col"
@@ -227,12 +227,13 @@ namespace TM1638 {
         //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
         //% col.def=Color.RED
         setLed (ledNum: number, on: boolean, col: Color = Color.RED): void {
-            if (col == Color.GREEN) {
-                ledNum += 8;
+            let letAdr = ledNum-1;
+            if (col === Color.GREEN) {
+                letAdr = ((ledNum-1) << 1)
             }
             this.sendCommand(68);
             this.startCommand();
-            this.writeByte(193 + ((ledNum-1) << 1));
+            this.writeByte(193 + letAdr);
             this.writeByte(on ? 1 : 0);
             this.endCommand();
         }
