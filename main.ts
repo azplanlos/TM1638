@@ -227,14 +227,14 @@ namespace TM1638 {
         //% ledNum.min=1 ledNum.max=8 ledNum.defl=1
         //% col.def=Color.RED
         setLed (ledNum: number, on: boolean, col: Color = Color.RED): void {
-            let letAdr = ledNum-1;
-            if (col === Color.GREEN) {
-                letAdr = ((ledNum-1) << 1)
+            if (col === Color.RED) {
+                ledNum -= 8;
             }
+            let letAdr = ((ledNum-1) << 1);
             this.sendCommand(68);
             this.startCommand();
             this.writeByte(193 + letAdr);
-            this.writeByte(on ? 1 : 0);
+            this.writeByte(on ? (col === Color.GREEN ? 1 : 2) : 0);
             this.endCommand();
         }
 
