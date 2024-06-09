@@ -290,8 +290,43 @@ namespace TM1638 {
                 buttons3 |= v3;
             }
             this.endCommand();
-            return buttons + (buttons2 * 255) + (buttons3 * 255 * 255);
+            return buttons2 + (buttons * 256) + (buttons3 * 256 * 256);
         }
+
+        // 1 = 1020
+        // 2 = 16320
+        // 3 = -
+        // 4 = 32640
+        // 5 = 4080
+        // 6 = 65280
+        // 7 = 8160
+        // 8 = 130560
+        // 9 = 2
+        // 10 = 32
+        // 11 = 4
+        // 12 = 64
+        // 13 = 8
+        // 14 = 128
+        // 15 = 16
+        // 16 = 256
+
+
+        buttonNummerVonCode(code: number): number[] {
+            const tasten: number[] = [];
+            
+            // 1 3 5 7 2 4 6 8
+            
+            // 9 11 13 15 10 12 14 16
+            for (let i = 9; i <= 16; i++) {
+              const num = code >> (i % 2 == 0 ? 5 : 1) + (i - (i % 2 == 0 ? 10 : 9)) / 2;
+              if ((num & 0b1) === 1) {
+                tasten.push(i);
+              }
+            }
+            return tasten;
+          }
+
+        // 8 6 4 2 7 5 3 1 x 16 14 12 10 15 13 11 9
 
         /**
          * check if button is pressed
@@ -303,7 +338,7 @@ namespace TM1638 {
         //% parts="TM1638"
         //% buttonNum.min=1 buttonNum.max=24 buttonNum.defl=1
         buttonPressed(buttonNum: number): boolean {
-            return (this.readButtons() >> (buttonNum-1) & 1) == 1
+            return this.buttonNummerVonCode(this.readButtons()).find(bn => bn === buttonNum) !== undefined
         }
     }
 
