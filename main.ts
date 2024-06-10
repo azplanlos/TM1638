@@ -293,40 +293,44 @@ namespace TM1638 {
             return buttons2 + (buttons << 8) + (buttons3 << 16);
         }
 
-        // 1 = 1020
-        // 2 = 16320
-        // 3 = -
-        // 4 = 32640
-        // 5 = 4080
-        // 6 = 65280
-        // 7 = 8160
-        // 8 = 130560
-        // 9 = 2
-        // 10 = 32
-        // 11 = 4
-        // 12 = 64
-        // 13 = 8
-        // 14 = 128
-        // 15 = 16
-        // 16 = 256
+        // 1 = 1
+        // 2 = 16
+        // 3 = 2
+        // 4 = 32
+        // 5 = 4
+        // 6 = 64
+        // 7 = 8
+        // 8 = 128
+        // 9 = 256
+        // 10 = 4096
+        // 11 = 512
+        // 12 = 8192
+        // 13 = 1024
+        // 14 = 16384
+        // 15 = 2048
+        // 16 = 32768
 
 
         buttonNummerVonCode(code: number): number[] {
             const tasten: number[] = [];
             
             // 1 3 5 7 2 4 6 8
+            for (let i = 1; i <= 8; i++) {
+                const num = code >> (i % 2 == 0 ? 3 : 0) + i / 2;
+                if ((num & 0b1) === 1) {
+                    tasten.push(i);
+                }
+            }
             
             // 9 11 13 15 10 12 14 16
             for (let i = 9; i <= 16; i++) {
-              const num = code >> (i % 2 == 0 ? 5 : 1) + (i - (i % 2 == 0 ? 10 : 9)) / 2;
-              if ((num & 0b1) === 1) {
-                tasten.push(i);
-              }
+                const num = code >> (i % 2 == 0 ? 12 : 8) + (i - 9) / 2;
+                if ((num & 0b1) === 1) {
+                    tasten.push(i);
+                }
             }
             return tasten;
           }
-
-        // 8 6 4 2 7 5 3 1 x 16 14 12 10 15 13 11 9
 
         /**
          * check if button is pressed
