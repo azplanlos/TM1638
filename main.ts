@@ -282,9 +282,9 @@ namespace TM1638 {
             let v3 = 0;
             for (let i = 0; i < 4; i++) {
                 let byte = this.readByte();
-                v = (byte &  0b00100010) << (i-1);
-                v2 = (byte & 0b01000100) << (i-2);
-                v3 = (byte & 0b10001000) << (i-3);
+                v = shiftLeft(byte &  0b00100010, i-1);
+                v2 = shiftLeft(byte & 0b01000100, i-2);
+                v3 = shiftLeft(byte & 0b10001000, i-3);
                 buttons |= v;
                 buttons2 |= v2;
                 buttons3 |= v3;
@@ -365,3 +365,12 @@ namespace TM1638 {
         return tm;
     }
 }
+
+// fix issue with negative shift in javascript
+function shiftLeft(num: number, amount: number): number {
+    if (amount >= 0) {
+      return num << amount;
+    } else {
+      return num >> Math.abs(amount);
+    }
+  }
